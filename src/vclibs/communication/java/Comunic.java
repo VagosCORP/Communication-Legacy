@@ -78,7 +78,10 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 	/** El Estado de la Conexión Actual:
 	 * NULL, WAITING ó CONNECTED. */
 	public int estado = NULL;
-
+	
+	public boolean debug = true;
+	public boolean idebug = true;
+	
 	// ///////////////Código para Listeners/////////////////
 	/** The on conn listener. */
 	OnConnectionListener onConnListener;
@@ -188,10 +191,21 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 	 * @param text the text
 	 */
 	private void wlog(String text) {
-		if(tcon == SERVER)
-			System.out.println("Server - "+text);
-		else if(tcon == CLIENT)
-			System.out.println("Client - "+text);
+		if(debug) {
+			if(tcon == SERVER)
+				System.out.println("Server - "+text);
+			else if(tcon == CLIENT)
+				System.out.println("Client - "+text);
+		}
+	}
+	
+	private void ilog(String text) {
+		if(idebug) {
+			if(tcon == SERVER)
+				System.out.println("Server - "+text);
+			else if(tcon == CLIENT)
+				System.out.println("Client - "+text);
+		}
 	}
 
 	/**
@@ -281,7 +295,7 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 				// cancel(true);
 				if (serverSocket != null)
 					serverSocket.close();
-				wlog("Espera detenida");
+				ilog("Espera detenida");
 			}
 		} catch (IOException e) {
 			wlog(e.getMessage());
@@ -419,7 +433,7 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 		byte[] orden = values.get(0);
 		if (orden == EN_ESPERA) {
 			estado = WAITING;
-			wlog("En Espera");
+			ilog("En Espera");
 		} else if (orden == DATO_RECIBIDO) {
 			int len = Integer.parseInt(new String(values.get(1)));
 			byte[] buffer = values.get(2);
@@ -445,7 +459,7 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 			estado = CONNECTED;
 			if (onConnListener != null)
 				onConnListener.onConnectionstablished();
-			wlog("Conexion establecida");
+			ilog("Conexion establecida");
 		} else if (orden == IO_EXCEPTION) {
 //			wlog("IO Exception");
 			estado = NULL;
@@ -463,7 +477,7 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 			onConnListener.onConnectionfinished();
 		if (onDisConnListener != null)
 			onDisConnListener.onConnectionfinished();
-		wlog("onPostexecute");
+		ilog("onPostexecute");
 		super.done();
 	}
 //	public static void main(String[] args) {

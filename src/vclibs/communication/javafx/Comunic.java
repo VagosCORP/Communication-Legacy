@@ -76,6 +76,9 @@ public class Comunic extends Task<Integer> {
 	/** El Estado de la Conexión Actual:
 	 * NULL, WAITING ó CONNECTED. */
 	public int estado = NULL;
+	
+	public boolean debug = true;
+	public boolean idebug = true;
 
 	// ///////////////Código para Listeners/////////////////
 	/** The on conn listener. */
@@ -186,10 +189,21 @@ public class Comunic extends Task<Integer> {
 	 * @param text the text
 	 */
 	private void wlog(String text) {
-		if(tcon == SERVER)
-			System.out.println("Server - "+text);
-		else if(tcon == CLIENT)
-			System.out.println("Client - "+text);
+		if(debug) {
+			if(tcon == SERVER)
+				System.out.println("Server - "+text);
+			else if(tcon == CLIENT)
+				System.out.println("Client - "+text);
+		}
+	}
+	
+	private void ilog(String text) {
+		if(idebug) {
+			if(tcon == SERVER)
+				System.out.println("Server - "+text);
+			else if(tcon == CLIENT)
+				System.out.println("Client - "+text);
+		}
 	}
 
 	/**
@@ -279,7 +293,7 @@ public class Comunic extends Task<Integer> {
 				// cancel(true);
 				if (serverSocket != null)
 					serverSocket.close();
-				wlog("Espera detenida");
+				ilog("Espera detenida");
 			}
 		} catch (IOException e) {
 			wlog(e.getMessage());
@@ -418,7 +432,7 @@ public class Comunic extends Task<Integer> {
 	protected void updateMessage(String message) {
 		if (message == EN_ESPERA) {
 			estado = WAITING;
-			wlog("En Espera");
+			ilog("En Espera");
 		} else if (message == DATO_RECIBIDO) {
 //			String rcv = message;
 //			if(rcv.equals(conKiller)) {
@@ -432,7 +446,7 @@ public class Comunic extends Task<Integer> {
 			estado = CONNECTED;
 			if (onConnListener != null)
 				onConnListener.onConnectionstablished();
-			wlog("Conexion establecida");
+			ilog("Conexion establecida");
 		} else if (message == IO_EXCEPTION) {
 //			wlog("IO Exception");
 			estado = NULL;
@@ -465,7 +479,7 @@ public class Comunic extends Task<Integer> {
 			onConnListener.onConnectionfinished();
 		if (onDisConnListener != null)
 			onDisConnListener.onConnectionfinished();
-		wlog("onPostexecute");
+		ilog("onPostexecute");
 		super.succeeded();
 	}
 
