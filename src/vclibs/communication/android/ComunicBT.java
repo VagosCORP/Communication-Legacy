@@ -101,6 +101,10 @@ public class ComunicBT extends AsyncTask<Void, byte[], Integer> {
 	
 	/** The on com listener. */
 	OnComunicationListener onCOMListener;
+	
+	public boolean debug = true;
+	public boolean idebug = true;
+	public boolean edebug = true;
 
 //	/**
 //	 * The listener interface for receiving onComunication events.
@@ -201,11 +205,13 @@ public class ComunicBT extends AsyncTask<Void, byte[], Integer> {
 	 * @param text the text
 	 */
 	private void makeToast(String text) {
-//		Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
-		if(tcon == SERVER)
-			Log.d("Server",text);
-		else if(tcon == CLIENT)
-			Log.d("Client",text);
+		if(idebug) {
+//			Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+			if(tcon == SERVER)
+				Log.d("Server",text);
+			else if(tcon == CLIENT)
+				Log.d("Client",text);
+		}
 	}
 
 	/**
@@ -214,10 +220,12 @@ public class ComunicBT extends AsyncTask<Void, byte[], Integer> {
 	 * @param text the text
 	 */
 	private void wlog(String text) {
-		if(tcon == SERVER)
-			Log.d("Server",text);
-		else if(tcon == CLIENT)
-			Log.d("Client",text);
+		if(debug) {
+			if(tcon == SERVER)
+				Log.d("Server",text);
+			else if(tcon == CLIENT)
+				Log.d("Client",text);
+		}
 	}
 
 	/**
@@ -292,7 +300,8 @@ public class ComunicBT extends AsyncTask<Void, byte[], Integer> {
 				outputSt.writeBytes(dato);
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -307,7 +316,8 @@ public class ComunicBT extends AsyncTask<Void, byte[], Integer> {
 				outputSt.writeByte(dato);
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -324,7 +334,8 @@ public class ComunicBT extends AsyncTask<Void, byte[], Integer> {
 			}
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -341,7 +352,8 @@ public class ComunicBT extends AsyncTask<Void, byte[], Integer> {
 			}
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -427,7 +439,8 @@ public class ComunicBT extends AsyncTask<Void, byte[], Integer> {
 			wlog("IO Exception");
 			publishProgress(IO_EXCEPTION);
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 		return null;
 	}
@@ -447,8 +460,8 @@ public class ComunicBT extends AsyncTask<Void, byte[], Integer> {
 					try {
 						Thread.sleep(ms);
 					} catch (InterruptedException e) {
-
-						e.printStackTrace();
+						if(edebug)
+							e.printStackTrace();
 					}
 				}
 

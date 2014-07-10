@@ -81,6 +81,7 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 	
 	public boolean debug = true;
 	public boolean idebug = true;
+	public boolean edebug = true;
 	
 	// ///////////////Código para Listeners/////////////////
 	/** The on conn listener. */
@@ -251,7 +252,8 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 				outputSt.writeBytes(dato);
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -266,7 +268,8 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 				outputSt.writeByte(dato);
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -282,7 +285,8 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 			}
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -299,7 +303,8 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 			}
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 	
@@ -381,7 +386,8 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 			wlog("IO Exception");
 			publish(IO_EXCEPTION);
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 		return null;
 	}

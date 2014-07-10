@@ -15,6 +15,9 @@ public class TimeOut extends Task<Integer> {
 	/** The on to listener. */
 	OnTimeOutListener onTOListener;
 	
+	public boolean idebug = true;
+	public boolean edebug = true;
+	
 //	/**
 //	 * The listener interface for receiving onTimeOut events.
 //	 * The class that is interested in processing a onTimeOut
@@ -67,7 +70,8 @@ public class TimeOut extends Task<Integer> {
 	 * On pre execute.
 	 */
 	protected void onPreExecute() {
-		System.out.println("TimeOut - "+"onPreExecute");
+		if(idebug)
+			System.out.println("TimeOut - "+"onPreExecute");
 		if(onTOListener != null)
 			onTOListener.onTimeOutEnabled();
 	}
@@ -77,14 +81,16 @@ public class TimeOut extends Task<Integer> {
 	 */
 	@Override
 	protected Integer call() throws Exception {
-		System.out.println("TimeOut - "+"doInBackground");
+		if(idebug)
+			System.out.println("TimeOut - "+"doInBackground");
 		long ms = time/10;
 		try {
 			for(int i=0; !isCancelled() && i < ms; i++) {
 				Thread.sleep(10);
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 		return 1;
 	}
@@ -94,7 +100,8 @@ public class TimeOut extends Task<Integer> {
 	 */
 	@Override
 	protected void cancelled() {
-		System.out.println("TimeOut - "+"onCancelled");
+		if(idebug)
+			System.out.println("TimeOut - "+"onCancelled");
 		if(onTOListener != null)
 			onTOListener.onTimeOutCancelled();
 	}
@@ -104,7 +111,8 @@ public class TimeOut extends Task<Integer> {
 	 */
 	@Override
 	protected void succeeded() {
-		System.out.println("TimeOut - "+"onPostExecute");
+		if(idebug)
+			System.out.println("TimeOut - "+"onPostExecute");
 		if(onTOListener != null)
 			onTOListener.onTimeOut();
 		super.done();

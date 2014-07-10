@@ -13,6 +13,9 @@ public class TimeOut extends AsyncTask<Long, Void, Integer> {
 	/** The on to listener. */
 	OnTimeOutListener onTOListener;
 	
+	public boolean idebug = true;
+	public boolean edebug = true;
+	
 //	/**
 //	 * The listener interface for receiving onTimeOut events.
 //	 * The class that is interested in processing a onTimeOut
@@ -56,7 +59,8 @@ public class TimeOut extends AsyncTask<Long, Void, Integer> {
 	 */
 	@Override
 	protected void onPreExecute() {
-		Log.d("TimeOut", "onPreExecute");
+		if(idebug)
+			Log.d("TimeOut", "onPreExecute");
 		if(onTOListener != null)
 			onTOListener.onTimeOutEnabled();
 		super.onPreExecute();
@@ -67,14 +71,16 @@ public class TimeOut extends AsyncTask<Long, Void, Integer> {
 	 */
 	@Override
 	protected Integer doInBackground(Long... params) {
-		Log.d("TimeOut", "doInBackground");
+		if(idebug)
+			Log.d("TimeOut", "doInBackground");
 		long ms = params[0]/10;
 		try {
 			for(int i=0; !isCancelled() && i < ms; i++) {
 				Thread.sleep(10);
 			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 		return 1;
 	}
@@ -84,7 +90,8 @@ public class TimeOut extends AsyncTask<Long, Void, Integer> {
 	 */
 	@Override
 	protected void onCancelled() {
-		Log.d("TimeOut", "onCancelled");
+		if(idebug)
+			Log.d("TimeOut", "onCancelled");
 		if(onTOListener != null)
 			onTOListener.onTimeOutCancelled();
 		super.onCancelled();
@@ -95,7 +102,8 @@ public class TimeOut extends AsyncTask<Long, Void, Integer> {
 	 */
 	@Override
 	protected void onPostExecute(Integer result) {
-		Log.d("TimeOut", "onPostExecute");
+		if(idebug)
+			Log.d("TimeOut", "onPostExecute");
 		if(onTOListener != null)
 			onTOListener.onTimeOut();
 		super.onPostExecute(result);

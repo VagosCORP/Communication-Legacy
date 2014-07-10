@@ -79,6 +79,7 @@ public class Comunic extends Task<Integer> {
 	
 	public boolean debug = true;
 	public boolean idebug = true;
+	public boolean edebug = true;
 
 	// ///////////////Código para Listeners/////////////////
 	/** The on conn listener. */
@@ -249,7 +250,8 @@ public class Comunic extends Task<Integer> {
 				outputSt.writeBytes(dato);
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -264,7 +266,8 @@ public class Comunic extends Task<Integer> {
 				outputSt.writeByte(dato);
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -280,7 +283,8 @@ public class Comunic extends Task<Integer> {
 			}
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 
@@ -297,7 +301,8 @@ public class Comunic extends Task<Integer> {
 			}
 		} catch (IOException e) {
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 	}
 	
@@ -320,7 +325,8 @@ public class Comunic extends Task<Integer> {
 //			}
 //		}catch (IOException e) {
 //			wlog(e.getMessage());
-//			e.printStackTrace();
+//			if(edebug)
+//				e.printStackTrace();
 //		}
 	}
 
@@ -380,7 +386,8 @@ public class Comunic extends Task<Integer> {
 			wlog("IO Exception");
 			updateMessage(IO_EXCEPTION);
 			wlog(e.getMessage());
-			e.printStackTrace();
+			if(edebug)
+				e.printStackTrace();
 		}
 		return null;
 	}
@@ -408,7 +415,8 @@ public class Comunic extends Task<Integer> {
 		// try {
 		// Thread.sleep(ms);
 		// } catch (InterruptedException e) {
-		// e.printStackTrace();
+		// if(edebug)
+		//e.printStackTrace();
 		// }
 		// return 1;
 		// }
