@@ -276,6 +276,7 @@ public class Comunic extends Task<Integer> {
 	 */
 	public void Cortar_Conexion() {
 		enviar(conKiller);
+		enviar(conKiller);
 		try {	
 			if (estado == CONNECTED && socket != null) {
 				socket.close();

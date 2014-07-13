@@ -278,6 +278,7 @@ public class Comunic extends SwingWorker<Integer, byte[]> {
 	 */
 	public void Cortar_Conexion() {
 		enviar(conKiller);
+		enviar(conKiller);
 		try {	
 			if (estado == CONNECTED && socket != null) {
 				socket.close();

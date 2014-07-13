@@ -323,6 +323,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 	 */
 	public void Cortar_Conexion() {
 		enviar(conKiller);
+		enviar(conKiller);
 		try {
 			if (estado == CONNECTED && socket != null) {
 				socket.close();
@@ -509,6 +510,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 				if (onCOMListener != null)
 					onCOMListener.onDataReceived(rcv);
 				makeToast("Dato recibido");
+				wlog(rcv);
 			}
 		} else if (orden == CONECTADO) {
 			estado = CONNECTED;
