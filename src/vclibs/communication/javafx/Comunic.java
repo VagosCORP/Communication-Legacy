@@ -80,6 +80,7 @@ public class Comunic extends Task<Integer> {
 	public boolean debug = true;
 	public boolean idebug = true;
 	public boolean edebug = true;
+	public boolean ecom = true;
 
 	// ///////////////Código para Listeners/////////////////
 	/** The on conn listener. */
@@ -275,8 +276,10 @@ public class Comunic extends Task<Integer> {
 	 * Cortar Conexion Actual.
 	 */
 	public void Cortar_Conexion() {
-		enviar(conKiller);
-		enviar(conKiller);
+		if(ecom) {
+			enviar(conKiller);
+			enviar(conKiller);
+		}
 		try {	
 			if (estado == CONNECTED && socket != null) {
 				socket.close();

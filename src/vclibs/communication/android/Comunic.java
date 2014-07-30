@@ -98,6 +98,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 	public boolean debug = true;
 	public boolean idebug = true;
 	public boolean edebug = true;
+	public boolean ecom = true;
 
 //	/**
 //	 * The listener interface for receiving onComunication events.
@@ -322,8 +323,10 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 	 * Cortar_ conexion.
 	 */
 	public void Cortar_Conexion() {
-		enviar(conKiller);
-		enviar(conKiller);
+		if(ecom) {
+			enviar(conKiller);
+			enviar(conKiller);
+		}
 		try {
 			if (estado == CONNECTED && socket != null) {
 				socket.close();
