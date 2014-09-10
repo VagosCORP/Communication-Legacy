@@ -1,4 +1,4 @@
-package vclibs.communication;
+package vclibs.communication.deprecated;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import vclibs.communication.Eventos.OnComunicationListener;
 import vclibs.communication.Eventos.OnConnectionListener;
-import vclibs.communication.Eventos.OnDisConnectionListener;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -98,7 +97,6 @@ public class ComunicBTs extends AsyncTask<Void, byte[], Integer> {
 	OnConnectionListener onConnListener;
 	
 	/** The on dis conn listener. */
-	OnDisConnectionListener onDisConnListener;
 	
 	/** The on com listener. */
 	OnComunicationListener onCOMListener;
@@ -167,49 +165,18 @@ public class ComunicBTs extends AsyncTask<Void, byte[], Integer> {
 //		public void onConnectionfinished();
 //	}
 
-	/**
-	 * Sets the connection listener.
-	 *
-	 * @param connListener the new connection listener
-	 */
 	public void setConnectionListener(OnConnectionListener connListener) {
 		onConnListener = connListener;
 	}
 
-	/**
-	 * Sets the dis connection listener.
-	 *
-	 * @param disconnListener the new dis connection listener
-	 */
-	public void setDisConnectionListener(OnDisConnectionListener disconnListener) {
-		onDisConnListener = disconnListener;
-	}
-
-	/**
-	 * Sets the comunication listener.
-	 *
-	 * @param comListener the new comunication listener
-	 */
 	public void setComunicationListener(OnComunicationListener comListener) {
 		onCOMListener = comListener;
 	}
 
-	// ///////////////Código para Listeners/////////////////
-
-	/**
-	 * Make toast.
-	 *
-	 * @param text the text
-	 */
 	private void makeToast(String text) {
 		Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 	}
 
-	/**
-	 * Wlog.
-	 *
-	 * @param text the text
-	 */
 	private void wlog(String text) {
 		if(tcon == SERVER)
 			Log.d("Server",text);
@@ -217,9 +184,6 @@ public class ComunicBTs extends AsyncTask<Void, byte[], Integer> {
 			Log.d("Client",text);
 	}
 
-	/**
-	 * Instantiates a new comunicBT.
-	 */
 	public ComunicBTs() {
 		estado = NULL;
 	}
@@ -285,7 +249,7 @@ public class ComunicBTs extends AsyncTask<Void, byte[], Integer> {
 	 */
 	public void Cortar_Conexion() {
 		try {
-			enviar(conKiller);
+//			enviar(conKiller);
 			DisTimeOut();
 			if (estado == CONNECTED && socket != null) {
 				socket.close();
@@ -384,7 +348,8 @@ public class ComunicBTs extends AsyncTask<Void, byte[], Integer> {
 					if (len != -1) {
 						byte[] blen = (len + "").getBytes();
 						publishProgress(DATO_RECIBIDO, blen, buffer);
-					}
+					}else
+						Cortar_Conexion();
 				}
 				conectado = false;
 				inputSt.close();
@@ -475,11 +440,13 @@ public class ComunicBTs extends AsyncTask<Void, byte[], Integer> {
 			int len = Integer.parseInt(new String(values[1]));
 			byte[] buffer = values[2];
 			String rcv = new String(buffer, 0, len);
-			if (rcv.equals(conKiller)) {
-				Cortar_Conexion();
-			} else if (onCOMListener != null)
+//			if (rcv.equals(conKiller)) {
+//				Cortar_Conexion();
+//			} else{
+			if (onCOMListener != null)
 				onCOMListener.onDataReceived(rcv);
 			makeToast("Dato recibido");
+//			}
 		} else if (orden == CONECTADO) {
 			estado = CONNECTED;
 			if (onConnListener != null)
@@ -511,8 +478,6 @@ public class ComunicBTs extends AsyncTask<Void, byte[], Integer> {
 		estado = NULL;
 		if (onConnListener != null)
 			onConnListener.onConnectionfinished();
-		if (onDisConnListener != null)
-			onDisConnListener.onConnectionfinished();
 		makeToast("onPostexecute");
 		super.onPostExecute(result);
 	}

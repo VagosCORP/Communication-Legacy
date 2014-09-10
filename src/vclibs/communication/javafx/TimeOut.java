@@ -3,72 +3,23 @@ package vclibs.communication.javafx;
 import vclibs.communication.Eventos.OnTimeOutListener;
 import javafx.concurrent.Task;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class JTimeOut.
- */
 public class TimeOut extends Task<Integer> {
 	
-	/** The time. */
 	long time = 0;
-	
-	/** The on to listener. */
-	OnTimeOutListener onTOListener;
-	
 	public boolean idebug = true;
 	public boolean edebug = true;
 	
-//	/**
-//	 * The listener interface for receiving onTimeOut events.
-//	 * The class that is interested in processing a onTimeOut
-//	 * event implements this interface, and the object created
-//	 * with that class is registered with a component using the
-//	 * component's <code>addOnTimeOutListener<code> method. When
-//	 * the onTimeOut event occurs, that object's appropriate
-//	 * method is invoked.
-//	 *
-//	 * @see OnTimeOutEvent
-//	 */
-//	public interface OnTimeOutListener {
-//		
-//		/**
-//		 * On time out enabled.
-//		 */
-//		public void onTimeOutEnabled();
-//		
-//		/**
-//		 * On time out cancelled.
-//		 */
-//		public void onTimeOutCancelled();
-//		
-//		/**
-//		 * On time out.
-//		 */
-//		public void onTimeOut();
-//	}
+	OnTimeOutListener onTOListener;
 	
-	/**
-	 * Sets the time out listener.
-	 *
-	 * @param tOListener the new time out listener
-	 */
 	public void setTimeOutListener(OnTimeOutListener tOListener) {
 		onTOListener = tOListener;
 	}
 	
-	/**
-	 * Instantiates a new j time out.
-	 *
-	 * @param ms the ms
-	 */
 	public TimeOut(long ms) {
 		time = ms;
 		onPreExecute();
 	}
 	
-	/**
-	 * On pre execute.
-	 */
 	protected void onPreExecute() {
 		if(idebug)
 			System.out.println("TimeOut - "+"onPreExecute");
@@ -76,9 +27,6 @@ public class TimeOut extends Task<Integer> {
 			onTOListener.onTimeOutEnabled();
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.SwingWorker#doInBackground()
-	 */
 	@Override
 	protected Integer call() throws Exception {
 		if(idebug)
@@ -95,9 +43,6 @@ public class TimeOut extends Task<Integer> {
 		return 1;
 	}
 
-	/**
-	 * On cancelled.
-	 */
 	@Override
 	protected void cancelled() {
 		if(idebug)
@@ -106,9 +51,6 @@ public class TimeOut extends Task<Integer> {
 			onTOListener.onTimeOutCancelled();
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.SwingWorker#done()
-	 */
 	@Override
 	protected void succeeded() {
 		if(idebug)
@@ -117,5 +59,4 @@ public class TimeOut extends Task<Integer> {
 			onTOListener.onTimeOut();
 		super.done();
 	}
-	
 }

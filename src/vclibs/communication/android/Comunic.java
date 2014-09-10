@@ -7,212 +7,61 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import vclibs.communication.Comunics;
 import vclibs.communication.Eventos.OnComunicationListener;
 import vclibs.communication.Eventos.OnConnectionListener;
-import vclibs.communication.Eventos.OnDisConnectionListener;
+import vclibs.communication.Inf;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-/**
- * The Class Comunic: Recurso de Comunicación para Android basado en Sockets.
- */
 public class Comunic extends AsyncTask<Void, byte[], Integer> {
 
-	/** Constante de Estado o Tipo de Conexión: Nulo. */
-	public final int NULL = 0;// estado
-	
-	/** Constante de Estado: En Espera. */
-	public final int WAITING = 1;// estado
-	
-	/** Constante de Estado: Conectado. */
-	public final int CONNECTED = 2;// estado
-
-	/** Constante de Tipo de Conexión: Cliente. */
-	public final int CLIENT = 1;// tcon
-	
-	/** Constante de Tipo de Conexión: Servidor. */
-	public final int SERVER = 2;// tcon
-
-	/** The en espera. */
+	public final String version = Inf.version;
+	public final int NULL = Inf.NULL;// estado
+	public final int WAITING = Inf.WAITING;// estado
+	public final int CONNECTED = Inf.CONNECTED;// estado
+	public final int CLIENT = Inf.CLIENT;// tcon
+	public final int SERVER = Inf.SERVER;// tcon
 	final byte[] EN_ESPERA = { 1 };
-	
-	/** The conectado. */
 	final byte[] CONECTADO = { 2 };
-	
-	/** The io exception. */
 	final byte[] IO_EXCEPTION = { 3 };
-	
-	/** The dato recivido. */
+	final byte[] CONEXION_PERDIDA = { 4 };
 	final byte[] DATO_RECIBIDO = { 7 };
-	
-	/** The con killer. */
-	final String conKiller = Comunics.conKiller;//"AZAzaZAZ";
-
-	/** The isa. */
 	InetSocketAddress isa;
-	
-	/** The s port. */
 	int sPort;
-	
-	/** The socket. */
 	Socket socket;
-	
-	/** The server socket. */
 	ServerSocket serverSocket;
-	
-	/** The input st. */
 	DataInputStream inputSt;
-	
-	/** The output st. */
 	DataOutputStream outputSt;
-	
-	/** The time out enabled. */
 	boolean timeOutEnabled = false;
-
-	/** The context. */
 	Context context;
-	
-	/** El Tipo de conexión Actual:
-	 *  NULL, CLIENT ó SERVER. */
 	public int tcon = NULL;
-	
-	/** The conectado. */
 	boolean conectado = false;
-	
-	/** El Estado de la Conexión Actual:
-	 * NULL, WAITING ó CONNECTED. */
 	public int estado = NULL;
-
-	// ///////////////Código para Listeners/////////////////
-	/** The on conn listener. */
-	OnConnectionListener onConnListener;
-	
-	/** The on dis conn listener. */
-	OnDisConnectionListener onDisConnListener;
-	
-	/** The on com listener. */
-	OnComunicationListener onCOMListener;
-	
 	public boolean debug = true;
 	public boolean idebug = true;
 	public boolean edebug = true;
-	public boolean ecom = true;
 
-//	/**
-//	 * The listener interface for receiving onComunication events.
-//	 * The class that is interested in processing a onComunication
-//	 * event implements this interface, and the object created
-//	 * with that class is registered with a component using the
-//	 * component's <code>addOnComunicationListener<code> method. When
-//	 * the onComunication event occurs, that object's appropriate
-//	 * method is invoked.
-//	 *
-//	 * @see OnComunicationEvent
-//	 */
-//	public interface OnComunicationListener {
-//		
-//		/**
-//		 * On data received.
-//		 *
-//		 * @param dato the dato
-//		 */
-//		public void onDataReceived(String dato);
-//	}
-//
-//	/**
-//	 * The listener interface for receiving onConnection events.
-//	 * The class that is interested in processing a onConnection
-//	 * event implements this interface, and the object created
-//	 * with that class is registered with a component using the
-//	 * component's <code>addOnConnectionListener<code> method. When
-//	 * the onConnection event occurs, that object's appropriate
-//	 * method is invoked.
-//	 *
-//	 * @see OnConnectionEvent
-//	 */
-//	public interface OnConnectionListener {
-//		
-//		/**
-//		 * On connectionstablished.
-//		 */
-//		public void onConnectionstablished();
-//
-//		/**
-//		 * On connectionfinished.
-//		 */
-//		public void onConnectionfinished();
-//	}
-//
-//	/**
-//	 * The listener interface for receiving onDisConnection events.
-//	 * The class that is interested in processing a onDisConnection
-//	 * event implements this interface, and the object created
-//	 * with that class is registered with a component using the
-//	 * component's <code>addOnDisConnectionListener<code> method. When
-//	 * the onDisConnection event occurs, that object's appropriate
-//	 * method is invoked.
-//	 *
-//	 * @see OnDisConnectionEvent
-//	 */
-//	public interface OnDisConnectionListener {
-//		
-//		/**
-//		 * On connectionfinished.
-//		 */
-//		public void onConnectionfinished();
-//	}
+	OnConnectionListener onConnListener;
+	OnComunicationListener onCOMListener;
 
-	/**
-	 * Sets the connection listener.
-	 *
-	 * @param connListener the new connection listener
-	 */
 	public void setConnectionListener(OnConnectionListener connListener) {
 		onConnListener = connListener;
 	}
-
-	/**
-	 * Sets the dis connection listener.
-	 *
-	 * @param disconnListener the new dis connection listener
-	 */
-	public void setDisConnectionListener(OnDisConnectionListener disconnListener) {
-		onDisConnListener = disconnListener;
-	}
-
-	/**
-	 * Sets the comunication listener.
-	 *
-	 * @param comListener the new comunication listener
-	 */
 	public void setComunicationListener(OnComunicationListener comListener) {
 		onCOMListener = comListener;
 	}
 
-	// ///////////////Código para Listeners/////////////////
-
-	/**
-	 * Make toast.
-	 *
-	 * @param text the text
-	 */
 	private void makeToast(String text) {
 		if(idebug) {
 //			Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 			if(tcon == SERVER)
-				Log.d("Server",text);
+				Log.i("Server",text);
 			else if(tcon == CLIENT)
-				Log.d("Client",text);
+				Log.i("Client",text);
 		}
 	}
 
-	/**
-	 * Wlog.
-	 *
-	 * @param text the text
-	 */
 	private void wlog(String text) {
 		if(debug) {
 			if(tcon == SERVER)
@@ -222,20 +71,10 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 
-	/**
-	 * Instantiates a new comunic.
-	 */
 	public Comunic() {
 		estado = NULL;
 	}
 
-	/**
-	 * Instantiates a new comunic.
-	 *
-	 * @param ip the ip
-	 * @param port the port
-	 * @param ui the ui
-	 */
 	@Deprecated
 	public Comunic(String ip, int port, Context ui) {
 		estado = NULL;
@@ -244,13 +83,6 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		isa = new InetSocketAddress(ip, port);
 	}
 	
-	/**
-	 * Instantiates a new comunic.
-	 *
-	 * @param ui the ui
-	 * @param ip the ip
-	 * @param port the port
-	 */
 	public Comunic(Context ui, String ip, int port) {
 		estado = NULL;
 		tcon = CLIENT;
@@ -258,12 +90,6 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		isa = new InetSocketAddress(ip, port);
 	}
 
-	/**
-	 * Instantiates a new comunic.
-	 *
-	 * @param port the port
-	 * @param ui the ui
-	 */
 	@Deprecated
 	public Comunic(int port, Context ui) {
 		estado = NULL;
@@ -272,12 +98,6 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		sPort = port;
 	}
 	
-	/**
-	 * Instantiates a new comunic.
-	 *
-	 * @param ui the ui
-	 * @param port the port
-	 */
 	public Comunic(Context ui, int port) {
 		estado = NULL;
 		tcon = SERVER;
@@ -285,11 +105,6 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		sPort = port;
 	}
 
-	/**
-	 * Enviar.
-	 *
-	 * @param dato the dato
-	 */
 	public void enviar(String dato) {
 //		Log.d("Comunic", "Enviar String: " + dato);
 		try {
@@ -302,11 +117,6 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 
-	/**
-	 * Enviar.
-	 *
-	 * @param dato the dato
-	 */
 	public void enviar(int dato) {
 //		Log.d("Comunic", "Enviar int: " + dato);
 		try {
@@ -319,14 +129,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 
-	/**
-	 * Cortar_ conexion.
-	 */
 	public void Cortar_Conexion() {
-		if(ecom) {
-			enviar(conKiller);
-			enviar(conKiller);
-		}
 		try {
 			if (estado == CONNECTED && socket != null) {
 				socket.close();
@@ -339,16 +142,13 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 
-	/**
-	 * Detener_ espera.
-	 */
 	public void Detener_Espera() {
 		try {
 			if (estado == WAITING) {
 				// cancel(true);
 				if (serverSocket != null)
 					serverSocket.close();
-				makeToast("Espera detenida");
+				makeToast(Inf.ESPERA_DETENIDA);
 			}
 		} catch (IOException e) {
 			wlog(e.getMessage());
@@ -357,32 +157,11 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 	
-	/**
-	 * Detener_ actividad.
-	 */
 	public void Detener_Actividad() {
 		Cortar_Conexion();
 		Detener_Espera();
-//		try {
-//			enviar(conKiller);
-//			if (estado == CONNECTED && socket != null) {
-//				socket.close();
-//				cancel(true);// socket = null;
-//			}
-//			if (estado == EN_SPERA) {
-//				if (serverSocket != null)
-//					serverSocket.close();
-//				wlog("Espera detenida");
-//			}
-//		}catch (IOException e) {
-//			wlog(e.getMessage());
-//			e.printStackTrace();
-//		}
 	}
 
-	/* (non-Javadoc)
-	 * @see android.os.AsyncTask#onPreExecute()
-	 */
 	@Override
 	protected void onPreExecute() {
 		estado = NULL;
@@ -392,9 +171,6 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		super.onPreExecute();
 	}
 
-	/* (non-Javadoc)
-	 * @see android.os.AsyncTask#doInBackground(java.lang.Object[])
-	 */
 	@Override
 	protected Integer doInBackground(Void... params) {
 		try {
@@ -425,7 +201,8 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 					if (len != -1) {
 						byte[] blen = (len + "").getBytes();
 						publishProgress(DATO_RECIBIDO, blen, buffer);
-					}
+					}else
+						publishProgress(CONEXION_PERDIDA);
 				}
 				conectado = false;
 				inputSt.close();
@@ -434,7 +211,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 					socket.close();
 			}
 		} catch (IOException e) {
-			wlog("IO Exception");
+			wlog(Inf.IO_EXCEPTION);
 			publishProgress(IO_EXCEPTION);
 			wlog(e.getMessage());
 			if(edebug)
@@ -443,11 +220,6 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		return null;
 	}
 
-	/**
-	 * En time out.
-	 *
-	 * @param ms the ms
-	 */
 	public void EnTimeOut(final long ms) {
 		if(!timeOutEnabled) {
 			final int sender = tcon;
@@ -475,80 +247,48 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 	
-//	public void DisTimeOut() {
-//		if(timeOutEnabled) {
-//			tothread.interrupt();
-//			timeOutEnabled = false;
-//		}
-//	}
-
-	/* (non-Javadoc)
- * @see android.os.AsyncTask#onProgressUpdate(java.lang.Object[])
- */
-@Override
+	@Override
 	protected void onProgressUpdate(byte[]... values) {
 		byte[] orden = values[0];
 		if (orden == EN_ESPERA) {
 			estado = WAITING;
-			makeToast("En Espera");
+			makeToast(Inf.EN_ESPERA);
 		} else if (orden == DATO_RECIBIDO) {
 			int len = Integer.parseInt(new String(values[1]));
 			byte[] buffer = values[2];
 			String rcv = new String(buffer, 0, len);
-//			if(rcv.equals(conKiller)) {
-//				Cortar_Conexion();}else
-			if(rcv.contains(conKiller)) {//if(rcv.equals(conKiller)) {
-				String[] lastmsg = rcv.split(conKiller);
-				if(lastmsg.length > 0) {
-					try {
-						String lmessage = lastmsg[0];
-						if (onCOMListener != null)
-							onCOMListener.onDataReceived(lmessage);
-					}catch(Exception e) {
-						
-					}
-				}
-				Cortar_Conexion();
-			}else {
-				if (onCOMListener != null)
-					onCOMListener.onDataReceived(rcv);
-				makeToast("Dato recibido");
-				wlog(rcv);
-			}
+			if (onCOMListener != null)
+				onCOMListener.onDataReceived(rcv);
+			makeToast(Inf.DATO_RECIBIDO);
+			wlog(rcv);
 		} else if (orden == CONECTADO) {
 			estado = CONNECTED;
 			if (onConnListener != null)
 				onConnListener.onConnectionstablished();
-			makeToast("Conexion establecida");
+			makeToast(Inf.CONECTADO);
 		} else if (orden == IO_EXCEPTION) {
-			// makeToast("IO Exception");
+			// makeToast(Inf.IO_EXCEPTION);
 			estado = NULL;
+		} else if (orden == CONEXION_PERDIDA) {
+			makeToast(Inf.CONEXION_PERDIDA);
+			Cortar_Conexion();
 		}
 		super.onProgressUpdate(values);
 	}
 
-	/* (non-Javadoc)
-	 * @see android.os.AsyncTask#onCancelled()
-	 */
 	@Override
 	protected void onCancelled() {
-		// estado = NULL;
-		wlog("onCancelled");
+		wlog(Inf.ON_CANCELLED);
 		onPostExecute(1);
 		super.onCancelled();
 	}
 
-	/* (non-Javadoc)
-	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-	 */
 	@Override
 	protected void onPostExecute(Integer result) {
 		estado = NULL;
 		if (onConnListener != null)
 			onConnListener.onConnectionfinished();
-		if (onDisConnListener != null)
-			onDisConnListener.onConnectionfinished();
-		makeToast("onPostexecute");
+		makeToast(Inf.ON_POSTEXEC);
 		super.onPostExecute(result);
 	}
 }

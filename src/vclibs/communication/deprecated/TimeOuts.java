@@ -1,17 +1,14 @@
-package vclibs.communication;
-
-import javax.swing.SwingWorker;
+package vclibs.communication.deprecated;
 
 import vclibs.communication.Eventos.OnTimeOutListener;
+import android.os.AsyncTask;
+import android.util.Log;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class JTimeOut.
+ * The Class TimeOut.
  */
-public class JTimeOuts extends SwingWorker<Integer, Void> {
-	
-	/** The time. */
-	long time = 0;
+public class TimeOuts extends AsyncTask<Long, Void, Integer> {
 	
 	/** The on to listener. */
 	OnTimeOutListener onTOListener;
@@ -54,32 +51,24 @@ public class JTimeOuts extends SwingWorker<Integer, Void> {
 		onTOListener = tOListener;
 	}
 	
-	/**
-	 * Instantiates a new j time out.
-	 *
-	 * @param ms the ms
+	/* (non-Javadoc)
+	 * @see android.os.AsyncTask#onPreExecute()
 	 */
-	public JTimeOuts(long ms) {
-		time = ms;
-		onPreExecute();
-	}
-	
-	/**
-	 * On pre execute.
-	 */
+	@Override
 	protected void onPreExecute() {
-		System.out.println("TimeOut - "+"onPreExecute");
+		Log.d("TimeOut", "onPreExecute");
 		if(onTOListener != null)
 			onTOListener.onTimeOutEnabled();
+		super.onPreExecute();
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.swing.SwingWorker#doInBackground()
+	 * @see android.os.AsyncTask#doInBackground(java.lang.Object[])
 	 */
 	@Override
-	protected Integer doInBackground() {
-		System.out.println("TimeOut - "+"doInBackground");
-		long ms = time/10;
+	protected Integer doInBackground(Long... params) {
+		Log.d("TimeOut", "doInBackground");
+		long ms = params[0]/10;
 		try {
 			for(int i=0; !isCancelled() && i < ms; i++) {
 				Thread.sleep(10);
@@ -90,34 +79,26 @@ public class JTimeOuts extends SwingWorker<Integer, Void> {
 		return 1;
 	}
 
-	/**
-	 * On cancelled.
+	/* (non-Javadoc)
+	 * @see android.os.AsyncTask#onCancelled()
 	 */
+	@Override
 	protected void onCancelled() {
-		System.out.println("TimeOut - "+"onCancelled");
+		Log.d("TimeOut", "onCancelled");
 		if(onTOListener != null)
 			onTOListener.onTimeOutCancelled();
-	}
-	
-	/**
-	 * On post execute.
-	 */
-	protected void onPostExecute() {
-		System.out.println("TimeOut - "+"onPostExecute");
-		if(onTOListener != null)
-			onTOListener.onTimeOut();
+		super.onCancelled();
 	}
 
 	/* (non-Javadoc)
-	 * @see javax.swing.SwingWorker#done()
+	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override
-	protected void done() {
-		if(!isCancelled())
-			onPostExecute();
-		else
-			onCancelled();
-		super.done();
+	protected void onPostExecute(Integer result) {
+		Log.d("TimeOut", "onPostExecute");
+		if(onTOListener != null)
+			onTOListener.onTimeOut();
+		super.onPostExecute(result);
 	}
 	
 }

@@ -1,4 +1,4 @@
-package vclibs.communication;
+package vclibs.communication.deprecated;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,7 +12,6 @@ import javax.swing.SwingWorker;
 
 import vclibs.communication.Eventos.OnComunicationListener;
 import vclibs.communication.Eventos.OnConnectionListener;
-import vclibs.communication.Eventos.OnDisConnectionListener;
 
 /**
  * The Class JComunic: Recurso de Comunicación para Java basado en Sockets
@@ -81,11 +80,6 @@ public class JComunics extends SwingWorker<Integer, byte[]> {
 	// ///////////////Código para Listeners/////////////////
 	/** The on conn listener. */
 	OnConnectionListener onConnListener;
-	
-	/** The on dis conn listener. */
-	OnDisConnectionListener onDisConnListener;
-	
-	/** The on com listener. */
 	OnComunicationListener onCOMListener;
 
 //	/**
@@ -159,15 +153,6 @@ public class JComunics extends SwingWorker<Integer, byte[]> {
 	 */
 	public void setConnectionListener(OnConnectionListener connListener) {
 		onConnListener = connListener;
-	}
-
-	/**
-	 * Sets the dis connection listener.
-	 *
-	 * @param disconnListener the new dis connection listener
-	 */
-	public void setDisConnectionListener(OnDisConnectionListener disconnListener) {
-		onDisConnListener = disconnListener;
 	}
 
 	/**
@@ -450,8 +435,6 @@ public class JComunics extends SwingWorker<Integer, byte[]> {
 		estado = NULL;
 		if (onConnListener != null)
 			onConnListener.onConnectionfinished();
-		if (onDisConnListener != null)
-			onDisConnListener.onConnectionfinished();
 		wlog("onPostexecute");
 		super.done();
 	}

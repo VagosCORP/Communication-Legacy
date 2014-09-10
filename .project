@@ -30,4 +30,31 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/vclibs/communication/Communication.java</name>
+			<type>1</type>
+			<locationURI>PARENT-1-WORKSPACE_LOC/Java%20Projects/Communication/src/vclibs/communication/Communication.java</locationURI>
+		</link>
+		<link>
+			<name>src/vclibs/communication/Layout.fxml</name>
+			<type>1</type>
+			<locationURI>PARENT-1-WORKSPACE_LOC/Java%20Projects/Communication/src/vclibs/communication/Layout.fxml</locationURI>
+		</link>
+		<link>
+			<name>src/vclibs/communication/LayoutController.java</name>
+			<type>1</type>
+			<locationURI>PARENT-1-WORKSPACE_LOC/Java%20Projects/Communication/src/vclibs/communication/LayoutController.java</locationURI>
+		</link>
+		<link>
+			<name>src/vclibs/communication/application.css</name>
+			<type>1</type>
+			<locationURI>PARENT-1-WORKSPACE_LOC/Java%20Projects/Communication/src/vclibs/communication/application.css</locationURI>
+		</link>
+		<link>
+			<name>src/vclibs/communication/background.jpg</name>
+			<type>1</type>
+			<locationURI>PARENT-1-WORKSPACE_LOC/Java%20Projects/Communication/src/vclibs/communication/background.jpg</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
