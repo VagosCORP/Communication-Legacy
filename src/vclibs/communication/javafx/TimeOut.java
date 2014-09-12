@@ -3,9 +3,12 @@ package vclibs.communication.javafx;
 import vclibs.communication.Eventos.OnTimeOutListener;
 import javafx.concurrent.Task;
 
+//Clase Temporizador, espera un tiempo en un hilo secundario
 public class TimeOut extends Task<Integer> {
 	
-	long time = 0;
+	long time = 0;//Variable de tiempo de espera
+	
+	//Variables para seleccionar qué imprimir en la Consola
 	public boolean idebug = true;
 	public boolean edebug = true;
 	
@@ -15,11 +18,16 @@ public class TimeOut extends Task<Integer> {
 		onTOListener = tOListener;
 	}
 	
+	/**
+	 * Constructor de la clase
+	 * @param ms: tiempo de espera solicitado
+	 */
 	public TimeOut(long ms) {
 		time = ms;
 		onPreExecute();
 	}
 	
+	//Acciones anteriores al inicio del hilo de ejecusión secundario
 	protected void onPreExecute() {
 		if(idebug)
 			System.out.println("TimeOut - "+"onPreExecute");
@@ -27,6 +35,7 @@ public class TimeOut extends Task<Integer> {
 			onTOListener.onTimeOutEnabled();
 	}
 
+	//Función del hilo de ejecución secundario
 	@Override
 	protected Integer call() throws Exception {
 		if(idebug)
@@ -43,6 +52,7 @@ public class TimeOut extends Task<Integer> {
 		return 1;
 	}
 
+	//Acciones ante cancelación de Actividad del hilo
 	@Override
 	protected void cancelled() {
 		if(idebug)
@@ -51,6 +61,7 @@ public class TimeOut extends Task<Integer> {
 			onTOListener.onTimeOutCancelled();
 	}
 
+	//Acciones ante la finalización de acciones del hilo
 	@Override
 	protected void succeeded() {
 		if(idebug)

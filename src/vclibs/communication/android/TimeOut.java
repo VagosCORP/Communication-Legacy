@@ -4,8 +4,10 @@ import vclibs.communication.Eventos.OnTimeOutListener;
 import android.os.AsyncTask;
 import android.util.Log;
 
+//Clase Temporizador, espera un tiempo en un hilo secundario
 public class TimeOut extends AsyncTask<Long, Void, Integer> {
 	
+	//Variables para seleccionar qué imprimir en la Consola
 	public boolean idebug = true;
 	public boolean edebug = true;
 	
@@ -15,6 +17,7 @@ public class TimeOut extends AsyncTask<Long, Void, Integer> {
 		onTOListener = tOListener;
 	}
 	
+	//Acciones anteriores al inicio del hilo de ejecusión secundario
 	@Override
 	protected void onPreExecute() {
 		if(idebug)
@@ -24,6 +27,7 @@ public class TimeOut extends AsyncTask<Long, Void, Integer> {
 		super.onPreExecute();
 	}
 
+	//Función del hilo de ejecución secundario
 	@Override
 	protected Integer doInBackground(Long... params) {
 		if(idebug)
@@ -40,6 +44,7 @@ public class TimeOut extends AsyncTask<Long, Void, Integer> {
 		return 1;
 	}
 
+	//Acciones ante cancelación de Actividad del hilo
 	@Override
 	protected void onCancelled() {
 		if(idebug)
@@ -49,6 +54,7 @@ public class TimeOut extends AsyncTask<Long, Void, Integer> {
 		super.onCancelled();
 	}
 
+	//Acciones ante la finalización de acciones del hilo
 	@Override
 	protected void onPostExecute(Integer result) {
 		if(idebug)

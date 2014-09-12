@@ -12,57 +12,98 @@ import vclibs.communication.Inf;
 import vclibs.communication.Eventos.OnComunicationListener;
 import vclibs.communication.Eventos.OnConnectionListener;
 
+//Clase de comunicación de Red para la Computadora
 public class Comunic extends Task<Integer> {
 
+	//Constantes deribadas de la Clase Inf
 	public final String version = Inf.version;
 	public final int NULL = Inf.NULL;// estado
 	public final int WAITING = Inf.WAITING;// estado
 	public final int CONNECTED = Inf.CONNECTED;// estado
 	public final int CLIENT = Inf.CLIENT;// tcon
 	public final int SERVER = Inf.SERVER;// tcon
+	
+	//Constantes para reportes de estado
 	public final String EN_ESPERA = "EN_ESPERA";//{ 1 };
 	public final String CONECTADO = "CONECTADO";//{ 2 };
 	final String IO_EXCEPTION = "IO_EXCEPTION";//{ 3 };
 	final String CONEXION_PERDIDA = "CONEXION PERDIDA";//{ 4 };
 	public final String DATO_RECIBIDO = "DATO_RECIBIDO";//{ 7 };
-	InetSocketAddress isa;
-	int sPort = 2000;
-	Socket socket;
-	ServerSocket serverSocket;
-	DataInputStream inputSt;
-	DataOutputStream outputSt;
-	public int tcon = NULL;
-	boolean conectado = false;
-	public int estado = NULL;
 	
+	InetSocketAddress isa;//Dirección a la cual conectarse
+	int sPort = 2000;//Puerto de Servidor, valor por defecto: 2000
+	Socket socket;//Medio de Conexión de Red
+	ServerSocket serverSocket;//Medio de Conexión del Servidor
+	DataInputStream inputSt;//Flujo de datos de entrada
+	DataOutputStream outputSt;//Flujo de datos de salida
+	public int tcon = NULL;//Tipo de conexión actual
+	boolean conectado = false;
+	public int estado = NULL;//Estado actual
+	
+	//Variables para seleccionar qué imprimir en la Consola
 	public boolean debug = true;
 	public boolean idebug = true;
 	public boolean edebug = true;
 
+	//Eventos usados según el caso
 	OnConnectionListener onConnListener;
 	OnComunicationListener onCOMListener;
 
+	/**
+	 * Definir acciones ante eventos de conexión
+	 * @param connListener: Instancia del Evento
+	 */
 	public void setConnectionListener(OnConnectionListener connListener) {
 		onConnListener = connListener;
 	}
+	
+	/**
+	 * Definir acciones ante eventos de comunicación
+	 * @param comListener: Instancia del Evento
+	 */
 	public void setComunicationListener(OnComunicationListener comListener) {
 		onCOMListener = comListener;
 	}
 
+	/**
+	 * Impresión de información de depuración
+	 * @param text: Mensaje a imprimir
+	 */
 	private void wlog(String text) {
 		if(debug)
 			Inf.println(tcon, text);
 	}
 	
+	/**
+	 * Impresión de información relevante al estado Actual
+	 * @param text
+	 */
 	private void ilog(String text) {
 		if(idebug)
 			Inf.println(tcon, text);
 	}
 
+	//Constructor simple de la clase, solo inicialización de variables
 	public Comunic() {
 		estado = NULL;
 	}
 	
+	/**
+	 * Constructor de la clase para modo Cliente
+	 * @param ip: Dirección IP del servidor al cual conectarse
+	 * @param port: Puerto del Servidor al cual conectarse
+	 */
+	public Comunic(String ip, int port) {
+		estado = NULL;
+		tcon = CLIENT;
+		isa = new InetSocketAddress(ip, port);
+		onPreExecute();
+	}
+	
+	/**
+	 * Constructor de la clase para modo Servidor
+	 * @param port: Puerto a la espera de conexión
+	 */
 	public Comunic(int port) {
 		estado = NULL;
 		tcon = SERVER;
@@ -70,13 +111,10 @@ public class Comunic extends Task<Integer> {
 		onPreExecute();
 	}
 
-	public Comunic(String ip, int port) {
-		estado = NULL;
-		tcon = CLIENT;
-		isa = new InetSocketAddress(ip, port);
-		onPreExecute();
-	}
-
+	/**
+	 * Función de envio de Texto
+	 * @param dato
+	 */
 	public void enviar(String dato) {
 		try {
 			if (estado == CONNECTED)
@@ -88,6 +126,10 @@ public class Comunic extends Task<Integer> {
 		}
 	}
 
+	/**
+	 * función de envio numérico, 1 Byte (rango de 0 a 255)
+	 * @param dato
+	 */
 	public void enviar(int dato) {
 		try {
 			if (estado == CONNECTED)
@@ -99,6 +141,7 @@ public class Comunic extends Task<Integer> {
 		}
 	}
 
+	//Función de finalización de Conexión
 	public void Cortar_Conexion() {
 		try {	
 			if (estado == CONNECTED && socket != null) {
@@ -112,6 +155,7 @@ public class Comunic extends Task<Integer> {
 		}
 	}
 
+	//Función de finalización de Espera a conexión del servidor
 	public void Detener_Espera() {
 		try {
 			if (estado == WAITING) {
@@ -127,11 +171,13 @@ public class Comunic extends Task<Integer> {
 		}
 	}
 	
+	//Función de finalización de actividad actual 
 	public void Detener_Actividad() {
 		Cortar_Conexion();
 		Detener_Espera();
 	}
 
+	//Acciones anteriores al inicio del hilo de ejecusión secundario
 	protected void onPreExecute() {
 		estado = NULL;
 		socket = null;
@@ -139,13 +185,14 @@ public class Comunic extends Task<Integer> {
 		conectado = false;
 	}
 
+	//Función del hilo de ejecución secundario
 	@Override
 	protected Integer call() throws Exception {
 		try {
 			if (tcon == CLIENT) {
 				socket = new Socket();
 				if (socket != null) {
-					socket.connect(isa,7000);
+					socket.connect(isa,7000);//reintentar por 7 segundos
 				} else
 					socket = null;
 			} else if (tcon == SERVER) {
@@ -189,6 +236,7 @@ public class Comunic extends Task<Integer> {
 		return null;
 	}
 
+	//Reporte de estado al hilo de ejecución principal
 	@Override
 	protected void updateMessage(String message) {
 		if (message == EN_ESPERA) {
@@ -215,6 +263,7 @@ public class Comunic extends Task<Integer> {
 		super.updateMessage(message);
 	}
 
+	//Acciones ante cancelación de Actividad del hilo
 	@Override
 	protected void cancelled() {
 		wlog(Inf.ON_CANCELLED);
@@ -222,6 +271,7 @@ public class Comunic extends Task<Integer> {
 		super.cancelled();
 	}
 	
+	//Acciones ante la finalización de acciones del hilo
 	@Override
 	protected void succeeded() {
 		estado = NULL;

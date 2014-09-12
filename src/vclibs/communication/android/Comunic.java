@@ -14,44 +14,65 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+//Clase de comunicación de Red para Android
 public class Comunic extends AsyncTask<Void, byte[], Integer> {
-
+	
+	//Constantes deribadas de la Clase Inf
 	public final String version = Inf.version;
-	public final int NULL = Inf.NULL;// estado
-	public final int WAITING = Inf.WAITING;// estado
-	public final int CONNECTED = Inf.CONNECTED;// estado
-	public final int CLIENT = Inf.CLIENT;// tcon
-	public final int SERVER = Inf.SERVER;// tcon
+	public final int NULL = Inf.NULL;//estado
+	public final int WAITING = Inf.WAITING;//estado
+	public final int CONNECTED = Inf.CONNECTED;//estado
+	public final int CLIENT = Inf.CLIENT;//tcon
+	public final int SERVER = Inf.SERVER;//tcon
+	
+	//Constantes para reportes de estado
 	final byte[] EN_ESPERA = { 1 };
 	final byte[] CONECTADO = { 2 };
 	final byte[] IO_EXCEPTION = { 3 };
 	final byte[] CONEXION_PERDIDA = { 4 };
 	final byte[] DATO_RECIBIDO = { 7 };
-	InetSocketAddress isa;
-	int sPort;
-	Socket socket;
-	ServerSocket serverSocket;
-	DataInputStream inputSt;
-	DataOutputStream outputSt;
-	boolean timeOutEnabled = false;
-	Context context;
-	public int tcon = NULL;
+	
+	InetSocketAddress isa;//Dirección a la cual conectarse
+	int sPort;//Puerto de Servidor, valor por defecto: 2000
+	Socket socket;//Medio de Conexión de Red
+	ServerSocket serverSocket;//Medio de Conexión del Servidor
+	DataInputStream inputSt;//Flujo de datos de entrada
+	DataOutputStream outputSt;//Flujo de datos de salida
+	boolean timeOutEnabled = false;//Tipo de conexión actual
+	Context context;//Contexto de la aplicación
+	public int tcon = NULL;//Tipo de conexión actual
 	boolean conectado = false;
-	public int estado = NULL;
+	public int estado = NULL;//Estado actual
+	
+	//Variables para seleccionar qué imprimir en la Consola
 	public boolean debug = true;
 	public boolean idebug = true;
 	public boolean edebug = true;
 
+	//Eventos usados según el caso
 	OnConnectionListener onConnListener;
 	OnComunicationListener onCOMListener;
 
+	/**
+	 * Definir acciones ante eventos de conexión
+	 * @param connListener: Instancia del Evento
+	 */
 	public void setConnectionListener(OnConnectionListener connListener) {
 		onConnListener = connListener;
 	}
+	
+	/**
+	 * Definir acciones ante eventos de comunicación
+	 * @param comListener: Instancia del Evento
+	 */
 	public void setComunicationListener(OnComunicationListener comListener) {
 		onCOMListener = comListener;
 	}
 
+	/**
+	 * Impresión de información relevante al estado Actual
+	 * @param text
+	 */
 	private void makeToast(String text) {
 		if(idebug) {
 //			Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
@@ -62,6 +83,10 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 
+	/**
+	 * Impresión de información de depuración
+	 * @param text: Mensaje a imprimir
+	 */
 	private void wlog(String text) {
 		if(debug) {
 			if(tcon == SERVER)
@@ -71,18 +96,17 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 
+	//Constructor simple de la clase, solo inicialización de variables
 	public Comunic() {
 		estado = NULL;
 	}
 
-	@Deprecated
-	public Comunic(String ip, int port, Context ui) {
-		estado = NULL;
-		tcon = CLIENT;
-		context = ui;
-		isa = new InetSocketAddress(ip, port);
-	}
-	
+	/**
+	 * Constructor de la clase para modo Cliente
+	 * @param ui: Contexto de la aplicación
+	 * @param ip: Dirección IP del servidor al cual conectarse
+	 * @param port: Puerto del Servidor al cual conectarse
+	 */
 	public Comunic(Context ui, String ip, int port) {
 		estado = NULL;
 		tcon = CLIENT;
@@ -90,14 +114,11 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		isa = new InetSocketAddress(ip, port);
 	}
 
-	@Deprecated
-	public Comunic(int port, Context ui) {
-		estado = NULL;
-		tcon = SERVER;
-		context = ui;
-		sPort = port;
-	}
-	
+	/**
+	 * Constructor de la clase para modo Servidor
+	 * @param ui: Contexto de la aplicación
+	 * @param port: Puerto a la espera de conexión
+	 */
 	public Comunic(Context ui, int port) {
 		estado = NULL;
 		tcon = SERVER;
@@ -105,6 +126,10 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		sPort = port;
 	}
 
+	/**
+	 * Función de envio de Texto
+	 * @param dato
+	 */
 	public void enviar(String dato) {
 //		Log.d("Comunic", "Enviar String: " + dato);
 		try {
@@ -117,6 +142,10 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 
+	/**
+	 * función de envio numérico, 1 Byte (rango de 0 a 255)
+	 * @param dato
+	 */
 	public void enviar(int dato) {
 //		Log.d("Comunic", "Enviar int: " + dato);
 		try {
@@ -129,6 +158,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 
+	//Función de finalización de Conexión
 	public void Cortar_Conexion() {
 		try {
 			if (estado == CONNECTED && socket != null) {
@@ -142,6 +172,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 
+	//Función de finalización de Espera a conexión del servidor
 	public void Detener_Espera() {
 		try {
 			if (estado == WAITING) {
@@ -157,11 +188,13 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 	
+	//Función de finalización de actividad actual 
 	public void Detener_Actividad() {
 		Cortar_Conexion();
 		Detener_Espera();
 	}
 
+	//Acciones anteriores al inicio del hilo de ejecusión secundario
 	@Override
 	protected void onPreExecute() {
 		estado = NULL;
@@ -171,13 +204,14 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		super.onPreExecute();
 	}
 
+	//Función del hilo de ejecución secundario
 	@Override
 	protected Integer doInBackground(Void... params) {
 		try {
 			if (tcon == CLIENT) {
 				socket = new Socket();
 				if (socket != null) {
-					socket.connect(isa,7000);
+					socket.connect(isa,7000);//reintentar por 7 segundos
 				} else
 					socket = null;
 			} else if (tcon == SERVER) {
@@ -220,6 +254,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		return null;
 	}
 
+	//Función para inicializar temporizador de corte de conexión
 	public void EnTimeOut(final long ms) {
 		if(!timeOutEnabled) {
 			final int sender = tcon;
@@ -247,6 +282,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		}
 	}
 	
+	//Reporte de estado al hilo de ejecución principal
 	@Override
 	protected void onProgressUpdate(byte[]... values) {
 		byte[] orden = values[0];
@@ -276,6 +312,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		super.onProgressUpdate(values);
 	}
 
+	//Acciones ante cancelación de Actividad del hilo
 	@Override
 	protected void onCancelled() {
 		wlog(Inf.ON_CANCELLED);
@@ -283,6 +320,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 		super.onCancelled();
 	}
 
+	//Acciones ante la finalización de acciones del hilo
 	@Override
 	protected void onPostExecute(Integer result) {
 		estado = NULL;
