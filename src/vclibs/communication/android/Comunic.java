@@ -70,7 +70,7 @@ public class Comunic extends AsyncTask<Void, byte[], Integer> {
 	}
 
 	/**
-	 * Impresión de información relevante al estado Actual
+	 * Impresión de información referente al estado Actual
 	 * @param text
 	 */
 	private void makeToast(String text) {

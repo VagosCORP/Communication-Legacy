@@ -75,7 +75,7 @@ public class Comunic extends Task<Integer> {
 	}
 	
 	/**
-	 * Impresión de información relevante al estado Actual
+	 * Impresión de información referente al estado Actual
 	 * @param text
 	 */
 	private void ilog(String text) {
