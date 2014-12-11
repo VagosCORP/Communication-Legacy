@@ -30,4 +30,31 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/vclibs/communication/Eventos.java</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/AndroidStudioProjects/VirtualTerminal/communication/src/main/java/vclibs/communication/Eventos.java</locationURI>
+		</link>
+		<link>
+			<name>src/vclibs/communication/Inf.java</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/AndroidStudioProjects/VirtualTerminal/communication/src/main/java/vclibs/communication/Inf.java</locationURI>
+		</link>
+		<link>
+			<name>src/vclibs/communication/android/Comunic.java</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/AndroidStudioProjects/VirtualTerminal/communication/src/main/java/vclibs/communication/android/Comunic.java</locationURI>
+		</link>
+		<link>
+			<name>src/vclibs/communication/android/ComunicBT.java</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/AndroidStudioProjects/VirtualTerminal/communication/src/main/java/vclibs/communication/android/ComunicBT.java</locationURI>
+		</link>
+		<link>
+			<name>src/vclibs/communication/android/TimeOut.java</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/AndroidStudioProjects/VirtualTerminal/communication/src/main/java/vclibs/communication/android/TimeOut.java</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
